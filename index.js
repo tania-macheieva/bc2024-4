@@ -25,6 +25,21 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('Not Found');
     }
+  } else if (req.method === 'PUT') {
+    // Обробка запиту PUT - запис файлу в кеш
+    const buffers = [];
+    req.on('data', chunk => buffers.push(chunk));
+    req.on('end', async () => {
+      const data = Buffer.concat(buffers);
+      try {
+        await fs.writeFile(filePath, data);
+        res.writeHead(201, { 'Content-Type': 'text/plain' });
+        res.end('Created');
+      } catch (error) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Internal Server Error');
+      }
+    });
   } else {
     // Відповідь для не підтримуваних методів
     res.writeHead(405, { 'Content-Type': 'text/plain' });
