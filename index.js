@@ -40,6 +40,16 @@ const server = http.createServer(async (req, res) => {
         res.end('Internal Server Error');
       }
     });
+  }  else if (req.method === 'DELETE') {
+    // Обробка запиту DELETE - видалення файлу з кешу
+    try {
+      await fs.unlink(filePath);
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('OK');
+    } catch {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('Not Found');
+    }
   } else {
     // Відповідь для не підтримуваних методів
     res.writeHead(405, { 'Content-Type': 'text/plain' });
